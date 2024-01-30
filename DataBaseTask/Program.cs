@@ -1,4 +1,4 @@
-﻿namespace data_BAse_Task
+namespace DataBase
 {
     class Program
     {
@@ -14,7 +14,7 @@
             string userInput;
             bool isWork = true;
 
-            Database database = new Database();
+            DataBase dataBase = new DataBase();
 
             while (isWork)
             {
@@ -26,23 +26,23 @@
                 switch (userInput)
                 {
                     case CommandAddPlayer:
-                        database.AddNewPlayer();
+                        dataBase.AddNewPlayer();
                         break;
 
                     case CommandOutPlayer:
-                        database.ShowAllPlayers();
+                        dataBase.ShowAllPlayer();
                         break;
 
                     case CommandBanPlayer:
-                        database.BanPlayer();
+                        dataBase.BanPlayer();
                         break;
 
                     case CommandUnBanPlayer:
-                        database.UnbanPlayer();
+                        dataBase.UnBanPlayer();
                         break;
 
                     case CommandRemuvePlayer:
-                        database.RemovePlayer();
+                        dataBase.RemovePlayer();
                         break;
 
                     case CommandExit:
@@ -55,198 +55,194 @@
                 }
             }
         }
-    }
 
-    class Player
-    {
-        public Player(string name, int level, bool isBanned, int id)
+        class Player
         {
-            Id = id;
-            Name = name;
-            Level = level;
-            IsBanned = isBanned;
-        }
-
-        public bool IsBanned { get; private set; }
-
-        public int Level { get; private set; }
-
-        public int Id { get; private set; }
-
-        public string Name { get; private set; }
-
-        public void Ban()
-        {
-            IsBanned = true;
-        }
-
-        public void Unban()
-        {
-            IsBanned = false;
-        }
-    }
-
-    class Database
-    {
-        private List<Player> _players;
-        private int _counterId = 1;
-
-        public Database()
-        {
-            _players = new List<Player>();
-            _players.Add(new Player("Сергей", 12, true, _counterId++));
-            _players.Add(new Player("Макс", 15, false, _counterId++));
-            _players.Add(new Player("Павел", 31, true, _counterId++));
-        }
-
-        public void ShowAllPlayers()
-        {
-            foreach (Player player in _players)
+            public Player(string name, int level, bool isBanned, int id)
             {
-                Console.WriteLine($"Имя Игрока: {player.Name}, левел игрока: {player.Level}, статус игрока {player.IsBanned} " +
-                    $", айди игрока: {player.Id}.");
+                Name = name;
+                Level = level;
+                IsBanned = isBanned;
+                Id = id;
+            }
+
+            public string Name { get; private set; }
+            public int Level { get; private set; }
+            public bool IsBanned { get; private set; }
+            public int Id { get; private set; }
+
+            public void Ban()
+            {
+                IsBanned = true;
+            }
+
+            public void UnBan()
+            {
+                IsBanned = false;
             }
         }
 
-        public void AddNewPlayer()
+        class DataBase
         {
-            Player player = CreatePlayer();
-            _players.Add(player);
-        }
+            private List<Player> _players;
+            private int _countId = 1;
 
-        public void RemovePlayer()
-        {
-            if (TryGetPlayer(out Player player))
+            public DataBase()
             {
-                _players.Remove(player);
-                Console.WriteLine("Игрок успешно удален");
-            }
-            else
-            {
-                Console.WriteLine("Такого игрока нет!");
-            }
-        }
-
-        public void BanPlayer()
-        {
-            if (TryGetPlayer(out Player player))
-            {
-                player.Ban();
-                Console.WriteLine("Игрок успешно заблокирован!");
-            }
-            else
-            {
-                Console.WriteLine("Такого игрока не найдено!");
+                _players = new List<Player>();
+                _players.Add(new Player("Сергей", 12, true, _countId++));
+                _players.Add(new Player("Макс", 15, false, _countId++));
+                _players.Add(new Player("Павел", 31, true, _countId++));
             }
 
-        }
-
-        public void UnbanPlayer()
-        {
-            if (TryGetPlayer(out Player player))
+            public void ShowAllPlayer()
             {
-                player.Unban();
-                Console.WriteLine("Игрок разбанен");
-            }
-            else
-            {
-                Console.WriteLine("Такого игрока не найдено!");
-            }
-        }
-
-        public Player CreatePlayer()
-        {
-            Player player = new Player(AddNamePlayer(), AddLevelPlayer(), AddStatus(), _counterId++);
-
-            return player;
-        }
-
-        public static string AddNamePlayer()
-        {
-            Console.WriteLine("Введите имя игрока");
-            string playerName = Console.ReadLine();
-
-            return playerName;
-        }
-
-        public static int AddLevelPlayer()
-        {
-            int minValue = 1;
-            int maxValue = 100;
-            bool isWork = true;
-            int playerLevel = 0;
-
-            while (isWork)
-            {
-                Console.WriteLine($"Введите левел игрока, от {minValue} до {maxValue}");
-
-                if (int.TryParse(Console.ReadLine(), out playerLevel))
+                foreach (Player player in _players)
                 {
-                    if (playerLevel >= minValue && playerLevel <= maxValue)
+                    Console.WriteLine($"Имя игрока: {player.Name}, левел игрока: {player.Level}, статус игрока {player.IsBanned}" +
+                        $", айди игрока: {player.Id}.");
+                }
+            }
+
+            public void AddNewPlayer()
+            {
+                Player player = CreatePlayer();
+                _players.Add(player);
+            }
+
+            public Player CreatePlayer()
+            {
+                Player player = new Player(AddNamePlayer(), AddLevel(), AddStatus(), _countId++);
+
+                return player;
+            }
+
+            public string AddNamePlayer()
+            {
+                Console.WriteLine("Введите имя Игрока");
+                string playerName = Console.ReadLine();
+
+                return playerName;
+            }
+
+            public void RemovePlayer()
+            {
+                if (TryGetPlayer(out Player player))
+                {
+                    _players.Remove(player);
+                    Console.WriteLine("Игрок успешно удален!");
+                }
+                else
+                {
+                    Console.WriteLine("Такого игрока нет!");
+                }
+            }
+
+            public void BanPlayer()
+            {
+                if (TryGetPlayer(out Player player))
+                {
+                    player.Ban();
+                    Console.WriteLine("Игрок успешно разбанен!");
+                }
+                else
+                {
+                    Console.WriteLine("Таког игрока не существует!");
+                }
+            }
+
+            public void UnBanPlayer()
+            {
+                if (TryGetPlayer(out Player player))
+                {
+                    player.UnBan();
+                    Console.WriteLine("Игрок успешно заблокирован!");
+                }
+                else
+                {
+                    Console.WriteLine("Таког игрока не существует!");
+                }
+            }
+
+            public int AddLevel()
+            {
+                int minValue = 1;
+                int maxValue = 100;
+                int playerLevel = 0;
+                bool isWork = true;
+
+                while (isWork)
+                {
+                    Console.WriteLine($"Введите левлел игрока, от {minValue} до {maxValue}.");
+
+                    if (int.TryParse(Console.ReadLine(), out playerLevel))
                     {
-                        Console.WriteLine($" Игроку присвоен левел: {playerLevel} ");
+                        if (playerLevel >= minValue && playerLevel <= maxValue)
+                        {
+                            Console.WriteLine($"Игроку присвоен левел: {playerLevel}");
+                            isWork = false;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Попробй снова, вы вышли за границы!");
+                        }
+                    }
+                }
+
+                return playerLevel;
+            }
+
+            public bool AddStatus()
+            {
+                string playerStatus;
+                string affirmativeAnswer = "да";
+                string negativeAnswer = "нет";
+                bool isWork = true;
+                bool status = true;
+
+                while (isWork)
+                {
+                    Console.WriteLine("Введите статус игрока, забанен - да , не забанен - нет");
+                    playerStatus = Console.ReadLine();
+
+                    if (playerStatus == affirmativeAnswer)
+                    {
+                        status = true;
+                        isWork = false;
+                    }
+                    else if (playerStatus == negativeAnswer)
+                    {
+                        status = false;
                         isWork = false;
                     }
                     else
                     {
-                        Console.WriteLine("Попробуй снова, вы вышли за границы!!!");
+                        Console.WriteLine("Введите, да или нет!");
                     }
                 }
+
+                return status;
             }
 
-            return playerLevel;
-        }
-
-        public static bool AddStatus()
-        {
-            string playerStatus;
-            string affirmativeAnswer = "да";
-            string negativeAnswer = "нет";
-            bool isWork = true;
-            bool status = true;
-
-            while (isWork)
+            public bool TryGetPlayer(out Player foundPlayer)
             {
-                Console.WriteLine("Введите статус игрока , забанен - да , забанен - нет");
-                playerStatus = Console.ReadLine();
+                Console.WriteLine("Введите айди игрока.");
 
-                if (playerStatus == affirmativeAnswer)
+                if (int.TryParse(Console.ReadLine(), out int id))
                 {
-                    status = true;
-                    isWork = false;
-                }
-                else if (playerStatus == negativeAnswer)
-                {
-                    status = false;
-                    isWork = false;
-                }
-                else
-                {
-                    Console.WriteLine("Введите, да или нет!");
-                }
-            }
-
-            return status;
-        }
-
-        public bool TryGetPlayer(out Player foundPlayer)
-        {
-            Console.WriteLine("Введите айди игрока.");
-
-            if (int.TryParse(Console.ReadLine(), out int id))
-            {
-                foreach (var player in _players)
-                {
-                    if (id == player.Id)
+                    foreach (var player in _players)
                     {
-                        foundPlayer = player;
-                        return true;
+                        if (id == player.Id)
+                        {
+                            foundPlayer = player;
+                            return true;
+                        }
                     }
                 }
-            }
 
-            foundPlayer = null;
-            return false;
+                foundPlayer = null;
+                return false;
+            }
         }
     }
 }
